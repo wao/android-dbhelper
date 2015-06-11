@@ -33,11 +33,15 @@ public class TestGeneratedCode extends AndroidTestCase {
         
         db.insert( TestTable.TableName, null, TestTable.contentBuilder().age(13).name("mike").birthday(now).values() );
 
+        Integer id;
+
         {
             Cursor cursor = db.query( TestTable.TableName, TestTable.Columns, null, null, null, null, null, null );
             assertTrue( cursor.moveToNext() );
             val reader = TestTable.cursorReader(cursor);
             //assertEquals( id, reader.id().get() );
+            id = reader.id().get();
+            Log.v( "Id", id.toString() );
             long v = 1416553316502L;
             Date date = new Date(v);
             Log.v( "DbhelperTest", String.format( "test %d", date.getTime() ) );
@@ -47,6 +51,16 @@ public class TestGeneratedCode extends AndroidTestCase {
             assertEquals( 13, reader.age().get() );
             assertEquals( now, reader.birthday().get() );
             assertTrue( reader.nullField().isNull() );
+        }
+
+        assertEquals( 1, db.update( TestTable.TableName, TestTable.contentBuilder().name("yang").values(), " id = ?1 ", new String[]{ id.toString() }  ) );
+
+        {
+            Cursor cursor = db.query( TestTable.TableName, TestTable.Columns, null, null, null, null, null, null );
+            assertTrue( cursor.moveToNext() );
+            val reader = TestTable.cursorReader(cursor);
+            assertEquals( 13, reader.age().get() );
+            assertEquals( "yang", reader.name().get() );
         }
 
         db.close();

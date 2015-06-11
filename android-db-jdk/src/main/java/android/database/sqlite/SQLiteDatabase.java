@@ -8,6 +8,8 @@ import android.database.Cursor;
 import com.almworks.sqlite4java.*;
 import com.google.common.base.Joiner;
 
+import android.util.Log;
+
 public class SQLiteDatabase {
     public interface CursorFactory{
     }
@@ -15,6 +17,7 @@ public class SQLiteDatabase {
     SQLiteConnection db;
 
 	public SQLiteDatabase(File dbFile) {
+        java.util.logging.Logger.getLogger("com.almworks.sqlite4java").setLevel(java.util.logging.Level.WARNING); 
         db = new SQLiteConnection( dbFile );
         try{
             db.open(true);
@@ -82,6 +85,68 @@ public class SQLiteDatabase {
             }
 
             return new SQLiteCursor( columns, stat );
+        }catch(SQLiteException e){
+            throw new RuntimeException( e );
+        }
+    }
+
+    public int update(String table, ContentValues values, String whereClause, String[] whereArgs){
+        try{
+            int wherelen = 0;
+
+            if( whereArgs != null ){
+                wherelen = whereArgs.length;
+            }
+
+            String[] columnNames = values.columnNames();
+            StringBuilder args = new StringBuilder("update ");
+            args.append( table );
+            args.append( " set " );
+            for( int i = 1; i < columnNames.length+1; ++i ){
+                args.append ( columnNames[i-1] );
+                args.append( "= ?" );
+                args.append( i+ wherelen );
+            }
+
+            if( whereClause != null ){
+                args.append( " where " );
+                args.append( whereClause );
+            }
+            
+            //Log.v( "Sqlite", args.toString() );
+
+            SQLiteStatement sql = db.prepare( args.toString() );
+
+            if( whereArgs != null ){
+                for( int i = 0; i < whereArgs.length; ++i ){
+                    //Log.v( "Bind", String.format( "%d=%s", i+1, whereArgs[i] ) );
+                    sql.bind( i+1, whereArgs[i] );
+                }
+            }
+
+            for( int i = 0; i < columnNames.length; ++i ){
+                //Log.v( "Bind", String.format( "%d", i+wherelen+1 ) );
+                Object value = values.getValue(columnNames[i]);
+                if( value.getClass().equals(Integer.class) ){
+                    sql.bind( i+wherelen+1, ((Integer)value).intValue() );
+                }else if( value.getClass().equals(Long.class)){
+                    sql.bind( i+wherelen+1, ((Long)value).longValue() );
+                }else if( value.getClass().equals(Double.class)){
+                    sql.bind( i+wherelen+1, ((Double)value).doubleValue() );
+                }else if( value.getClass().equals(Float.class)){
+                    sql.bind( i+wherelen+1, ((Float)value).floatValue() );
+                }else if( value.getClass().equals(String.class)){
+                    sql.bind( i+wherelen+1, (String)value );
+                }else{
+                    throw new RuntimeException( String.format( "Unsupport value type %s for field %s", value.getClass().toString(), columnNames[i] ) );
+                }
+            }
+
+            while( sql.step() ){
+            }
+            sql.dispose();
+
+            return db.getChanges();
         }catch(SQLiteException e){
             throw new RuntimeException( e );
         }
