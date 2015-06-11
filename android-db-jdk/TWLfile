@@ -1,0 +1,12 @@
+# vim: set ft=ruby
+ThinWestLake.project "info.thinkmore", "android-db-jdk", "0.0.1-SNAPSHOT" do
+    has_parent 
+
+    simple do
+        pom :default do
+            dependency "com.almworks.sqlite4java:sqlite4java" do
+                version "1.0.392"
+            end
+        end
+    end
+end

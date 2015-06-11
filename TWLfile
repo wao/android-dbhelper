@@ -1,0 +1,3 @@
+# vim: set ft=ruby
+ThinWestLake.project "info.thinkmore", "android-dbhelper-parent", "1.0.0-SNAPSHOT" do
+end

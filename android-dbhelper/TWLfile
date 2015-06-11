@@ -1,0 +1,18 @@
+# vim: set ft=ruby
+ThinWestLake.project "info.thinkmore", "android-dbhelper", "0.0.1-SNAPSHOT" do
+    has_parent 
+
+    simple do
+        pom :default do
+            dependency "android:android" do
+                version "5.0.1_r2"
+                scope "provided"
+            end
+
+            dependency "info.thinkmore:android-db-jdk" do
+                version "0.0.1-SNAPSHOT"
+                scope :test
+            end
+        end
+    end
+end

@@ -1,0 +1,25 @@
+# vim: set ft=ruby
+ThinWestLake.project "info.thinkmore", "android-dbhelper-jdk", "0.0.1-SNAPSHOT" do
+    has_parent 
+
+    simple do
+        pom :default do
+            dependency "info.thinkmore:android-db-jdk" do
+                version "0.0.1-SNAPSHOT"
+            end
+
+            dependency "org.projectlombok:lombok" do
+                version "1.16.4"
+            end
+
+            plugin "org.apache.maven.plugins:maven-surefire-plugin" do
+                version "2.18.1"
+                config do
+                    configuration do
+                        argLine "-Djava.library.path=lib"
+                    end
+                end
+            end
+        end
+    end
+end
