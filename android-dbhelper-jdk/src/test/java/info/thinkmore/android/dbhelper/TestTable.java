@@ -1,9 +1,10 @@
 //Auto generated file, don't override. Please use android_dbhelper_generator to regenerate it
 
-package info.thinkmore.android.dbhelper.test;
+package info.thinkmore.android.dbhelper;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import info.thinkmore.android.dbhelper.*;
 import java.util.Date;
 
@@ -18,9 +19,18 @@ public class TestTable {
     public static class CursorReader {
         Cursor cursor;
 
-        CursorReader(Cursor cursor){
+        public CursorReader(Cursor cursor){
             this.cursor = cursor;
         }
+
+        public Cursor getCursor(){
+            return cursor;
+        }
+
+        public boolean moveToNext(){
+            return cursor.moveToNext();
+        }
+
         private IntegerField fieldId;
 
         public IntegerField id(){
@@ -71,6 +81,14 @@ public class TestTable {
 
     public static class ContentValuesBuilder {
         ContentValues content;
+        SQLiteDatabase db;
+        String where;
+        String[] args;
+
+        ContentValuesBuilder( SQLiteDatabase db ){
+            content = new ContentValues();
+            this.db = db;
+        }
 
         ContentValuesBuilder( ContentValues content ){
             assert content != null;
@@ -106,6 +124,28 @@ public class TestTable {
         public ContentValues values(){
             return content;
         }
+
+        public ContentValuesBuilder where( String value ){
+            where = value;
+            return this;
+        }
+
+        public ContentValuesBuilder args( String[] value ){
+            args = value;
+            return this;
+        }
+        
+        public long insert(){
+           return db.insert( TableName, null, content ); 
+        }
+
+        public int update(){
+            return db.update( TableName, content, where, args );
+        }
+    }
+
+    public static ContentValuesBuilder writeBuilder( SQLiteDatabase db ){
+        return new ContentValuesBuilder( db );
     }
 
     public static ContentValuesBuilder contentBuilder(ContentValues content){
@@ -119,5 +159,23 @@ public class TestTable {
 
     public static CursorReader cursorReader(Cursor cursor){
         return new CursorReader( cursor );
+    }
+
+    public static class QueryBuilder extends QueryBuilderBase<QueryBuilder, CursorReader>{
+        public QueryBuilder( SQLiteDatabase db ){
+            super(db);
+        }
+
+        public CursorReader query(){
+            return new CursorReader( queryCursor() );
+        }
+
+        public QueryBuilder getThis(){
+            return this;
+        }
+    }
+
+    public static QueryBuilder queryBuilder( SQLiteDatabase db ){
+        return new QueryBuilder( db ).from( TableName ).columns( Columns );
     }
 }

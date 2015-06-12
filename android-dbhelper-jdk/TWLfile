@@ -2,6 +2,8 @@
 ThinWestLake.project "info.thinkmore", "android-dbhelper-jdk", "0.0.1-SNAPSHOT" do
     has_parent 
 
+    java_package "info.thinkmore.android.dbhelper"
+
     simple do
         pom :default do
             dependency "info.thinkmore:android-db-jdk" do

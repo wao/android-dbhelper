@@ -1,4 +1,4 @@
-package info.thinkmore.android.dbhelper.test;
+package info.thinkmore.android.dbhelper;
 
 import android.content.Context;
 import android.database.DatabaseErrorHandler;
