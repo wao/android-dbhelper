@@ -1,3 +1,6 @@
 .*.swp
 tmp
 target
+.classpath
+.factorypath
+tags
