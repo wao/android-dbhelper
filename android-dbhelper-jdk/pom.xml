@@ -48,7 +48,7 @@
     <plugins>
       <plugin>
         <configuration>
-            <argLine>-Djava.library.path=lib</argLine>
+          <argLine>-Djava.library.path=lib -Dorg.slf4j.simpleLogger.defaultLogLevel=trace</argLine>
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

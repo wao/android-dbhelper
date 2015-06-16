@@ -5,5 +5,6 @@ Android.dbschema do
         Integer :age
         DateTime :birthday
         String :nullField
+        Blob :blob
     end
 end

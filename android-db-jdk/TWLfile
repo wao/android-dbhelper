@@ -7,6 +7,19 @@ ThinWestLake.project "info.thinkmore", "android-db-jdk", "0.0.1-SNAPSHOT" do
             dependency "com.almworks.sqlite4java:sqlite4java" do
                 version "1.0.392"
             end
+
+            dependency "info.thinkmore:simple-assert" do
+                version "1.0-SNAPSHOT"
+            end
+
+            dependency "org.slf4j:slf4j-api" do
+                version "1.7.12"
+            end
+
+            dependency "org.slf4j:slf4j-simple" do
+                version "1.7.12"
+            end
+
         end
     end
 end

@@ -2,6 +2,9 @@ package android.database.sqlite;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 
@@ -11,13 +14,19 @@ import com.google.common.base.Joiner;
 import android.util.Log;
 
 public class SQLiteDatabase {
+    static Logger logger = LoggerFactory.getLogger( SQLiteDatabase.class );
+
     public interface CursorFactory{
     }
 
     SQLiteConnection db;
+   
+    enum TranState { BEGIN, COMMIT, NONE }
+    
+    //TODO not support multiple transaction here now
+    TranState transState = TranState.NONE;
 
 	public SQLiteDatabase(File dbFile) {
-        java.util.logging.Logger.getLogger("com.almworks.sqlite4java").setLevel(java.util.logging.Level.WARNING); 
         db = new SQLiteConnection( dbFile );
         try{
             db.open(true);
@@ -26,12 +35,47 @@ public class SQLiteDatabase {
         }
 	}
 
+    public void beginTransaction(){
+        if( info.thinkmore.SimpleAssert.enable ){
+            info.thinkmore.SimpleAssert.assertTrue( transState == TranState.NONE );
+        }
+        execSQL( "BEGIN TRANSACTION" );
+    }
+
+    public void endTransaction(){
+
+        switch( transState ){
+            case COMMIT:
+                execSQL( "COMMIT TRANSACTION" );
+                break;
+
+            case BEGIN:
+                execSQL( "ROLLBACK TRANSACTION" );
+                break;
+
+            case NONE:
+                if( info.thinkmore.SimpleAssert.enable ){
+                    info.thinkmore.SimpleAssert.assertTrue( false );
+                }
+        }
+
+        transState = TranState.NONE;
+    }
+
+    public void setTransactionSuccessful(){
+        if( info.thinkmore.SimpleAssert.enable ){
+            info.thinkmore.SimpleAssert.assertTrue( transState == TranState.BEGIN );
+        }
+        transState = TranState.COMMIT;
+    }
+
     public void close(){
         db.dispose();
     }
 
     public void execSQL( String sql ){
         try{
+            logger.trace( "ExecSQL: {}", sql );
             db.exec( sql );
         }catch(SQLiteException e){
             throw new RuntimeException(e);
@@ -77,10 +121,12 @@ public class SQLiteDatabase {
 
 
         try{
+            logger.trace( "SQLite: {}", sql.toString() );
             SQLiteStatement stat = db.prepare( sql.toString() );
             if( selectionArgs != null ){
                 for( int i = 0; i < selectionArgs.length; ++i ){
-                    stat.bind( i, selectionArgs[i] );
+                    logger.trace( "Bind {} with {}", i, selectionArgs[i] );
+                    stat.bind( i+1, selectionArgs[i] );
                 }
             }
 
@@ -115,6 +161,7 @@ public class SQLiteDatabase {
             
             //Log.v( "Sqlite", args.toString() );
 
+            logger.trace( "SQLite: {}", args.toString() );
             SQLiteStatement sql = db.prepare( args.toString() );
 
             if( whereArgs != null ){
@@ -174,6 +221,13 @@ public class SQLiteDatabase {
                     sql.bind( i+1, ((Float)value).floatValue() );
                 }else if( value.getClass().equals(String.class)){
                     sql.bind( i+1, (String)value );
+                }else if( value.getClass().isArray() ){
+                    if( value.getClass().getComponentType().equals(Byte.TYPE) ){
+                        sql.bind( i+1, (byte[])value );
+                    }
+                    else{
+                        throw new RuntimeException( String.format( "Unsupport array type %s[] for field %s", value.getClass().getComponentType().toString(), columnNames[i] ) );
+                    }
                 }else{
                     throw new RuntimeException( String.format( "Unsupport value type %s for field %s", value.getClass().toString(), columnNames[i] ) );
                 }

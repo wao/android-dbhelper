@@ -12,9 +12,9 @@ public class TestTable {
 
     public static final String TableName = "TestTable";
 
-    public static final String[] Columns = { "id","name","age","birthday","nullField" };
+    public static final String[] Columns = { "id","name","age","birthday","nullField","blob" };
 
-    public static final String CreateTableSql = "create table TestTable ( 'id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' TEXT, 'age' INTEGER, 'birthday' DateTime, 'nullField' TEXT )";
+    public static final String CreateTableSql = "create table TestTable ( 'id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' TEXT, 'age' INTEGER, 'birthday' DateTime, 'nullField' TEXT, 'blob' BLOB )";
 
     public static class CursorReader {
         Cursor cursor;
@@ -76,6 +76,15 @@ public class TestTable {
             return fieldNullfield;
         }
 
+        private BlobField fieldBlob;
+
+        public BlobField blob(){
+            if( fieldBlob == null ){
+                fieldBlob = new BlobField( "blob", cursor );
+            }
+            return fieldBlob;
+        }
+
 
     }
 
@@ -117,6 +126,11 @@ public class TestTable {
         
         public ContentValuesBuilder nullField( String value ){
             content.put( "nullField", value );
+            return this;
+        }
+        
+        public ContentValuesBuilder blob( byte[] value ){
+            content.put( "blob", value );
             return this;
         }
         

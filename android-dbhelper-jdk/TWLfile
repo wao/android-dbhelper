@@ -18,7 +18,7 @@ ThinWestLake.project "info.thinkmore", "android-dbhelper-jdk", "0.0.1-SNAPSHOT" 
                 version "2.18.1"
                 config do
                     configuration do
-                        argLine "-Djava.library.path=lib"
+                        argLine "-Djava.library.path=lib -Dorg.slf4j.simpleLogger.defaultLogLevel=trace"
                     end
                 end
             end
