@@ -1,5 +1,8 @@
 package info.thinkmore.android.dbhelper;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.google.java.contract.Requires;
 
 import android.database.Cursor;
@@ -15,7 +18,7 @@ public abstract class QueryBuilderBase<E, T>{
     String orderBy;
     String limit;
 
-    SQLiteDatabase db;
+    protected SQLiteDatabase db;
 
     public E columns( String[] value ){
         columns = value;
@@ -68,5 +71,6 @@ public abstract class QueryBuilderBase<E, T>{
         }
 
     abstract public T query();
+    abstract public T first();
     abstract public E getThis();
 }

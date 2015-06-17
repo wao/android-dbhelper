@@ -82,6 +82,23 @@ public class SQLiteDatabase {
         }
     }
 
+    public Cursor rawQuery( String sql, String[] selectionArgs ){
+        try{
+            logger.trace( "SQLite: {}", sql );
+            SQLiteStatement stat = db.prepare( sql );
+            if( selectionArgs != null ){
+                for( int i = 0; i < selectionArgs.length; ++i ){
+                    logger.trace( "Bind {} with {}", i, selectionArgs[i] );
+                    stat.bind( i+1, selectionArgs[i] );
+                }
+            }
+
+            return new SQLiteCursor( stat );
+        }catch(SQLiteException e){
+            throw new RuntimeException( e );
+        }
+    }
+
     public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit){
         StringBuilder sql = new StringBuilder( "select " );
         sql.append( columns[0] );
@@ -118,22 +135,7 @@ public class SQLiteDatabase {
             sql.append( limit );
         }
 
-
-
-        try{
-            logger.trace( "SQLite: {}", sql.toString() );
-            SQLiteStatement stat = db.prepare( sql.toString() );
-            if( selectionArgs != null ){
-                for( int i = 0; i < selectionArgs.length; ++i ){
-                    logger.trace( "Bind {} with {}", i, selectionArgs[i] );
-                    stat.bind( i+1, selectionArgs[i] );
-                }
-            }
-
-            return new SQLiteCursor( columns, stat );
-        }catch(SQLiteException e){
-            throw new RuntimeException( e );
-        }
+        return rawQuery( sql.toString(), selectionArgs );
     }
 
     public int update(String table, ContentValues values, String whereClause, String[] whereArgs){
@@ -221,6 +223,8 @@ public class SQLiteDatabase {
                     sql.bind( i+1, ((Float)value).floatValue() );
                 }else if( value.getClass().equals(String.class)){
                     sql.bind( i+1, (String)value );
+                }else if( value.getClass().equals(Boolean.class)){
+                    sql.bind( i+1, (Boolean)value ? 1 : 0 );
                 }else if( value.getClass().isArray() ){
                     if( value.getClass().getComponentType().equals(Byte.TYPE) ){
                         sql.bind( i+1, (byte[])value );

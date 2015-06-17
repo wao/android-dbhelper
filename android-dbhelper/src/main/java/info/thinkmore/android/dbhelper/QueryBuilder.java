@@ -70,6 +70,10 @@ public class QueryBuilder extends QueryBuilderBase<QueryBuilder, Integer> {
         throw new RuntimeException( "Not implment query() function" );
     }
 
+    public Integer first(){
+        throw new RuntimeException( "Not implment query() function" );
+    }
+
     public QueryBuilder getThis(){
         return this;
     }
