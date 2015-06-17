@@ -40,6 +40,16 @@ public abstract class QueryBuilderBase<E, T>{
         return getThis();
     }
 
+    public E andWhere( String whereClause ){
+        if( where == null ){
+            where = whereClause;
+        }
+        else{
+            where = String.format( "(%s) and (%s)", where, whereClause );
+        }
+        return getThis();
+    }
+
     public E groupBy( String gp ){
         groupBy = gp;
         return getThis();
