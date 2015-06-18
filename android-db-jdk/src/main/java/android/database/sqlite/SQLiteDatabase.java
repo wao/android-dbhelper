@@ -151,6 +151,9 @@ public class SQLiteDatabase {
             args.append( table );
             args.append( " set " );
             for( int i = 1; i < columnNames.length+1; ++i ){
+                if( i != 1 ){
+                    args.append( ", " );
+                }
                 args.append ( columnNames[i-1] );
                 args.append( "= ?" );
                 args.append( i+ wherelen );
@@ -186,6 +189,15 @@ public class SQLiteDatabase {
                     sql.bind( i+wherelen+1, ((Float)value).floatValue() );
                 }else if( value.getClass().equals(String.class)){
                     sql.bind( i+wherelen+1, (String)value );
+                }else if( value.getClass().equals(Boolean.class)){
+                    sql.bind( i+wherelen+1, ((Boolean)value)? 1 : 0 );
+                }else if( value.getClass().isArray() ){
+                    if( value.getClass().getComponentType().equals(Byte.TYPE) ){
+                        sql.bind( i+wherelen+1, (byte[])value );
+                    }
+                    else{
+                        throw new RuntimeException( String.format( "Unsupport array type %s[] for field %s", value.getClass().getComponentType().toString(), columnNames[i] ) );
+                    }
                 }else{
                     throw new RuntimeException( String.format( "Unsupport value type %s for field %s", value.getClass().toString(), columnNames[i] ) );
                 }

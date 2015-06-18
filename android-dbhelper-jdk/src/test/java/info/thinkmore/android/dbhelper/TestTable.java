@@ -6,6 +6,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import info.thinkmore.android.dbhelper.*;
+import java.util.List;
+import java.util.ArrayList;
+
 import java.util.Date;
 
 public class TestTable {
@@ -14,12 +17,14 @@ public class TestTable {
 
     public static final String[] Columns = { "id","name","age","birthday","nullField","blob" };
 
-    public static final String CreateTableSql = "create table TestTable ( 'id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' TEXT, 'age' INTEGER, 'birthday' DateTime, 'nullField' TEXT, 'blob' BLOB )";
+    public static final String CreateTableSql = "create table TestTable ( 'id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' TEXT, 'age' INTEGER, 'birthday' INTEGER, 'nullField' TEXT, 'blob' Blob )";
 
     public static class CursorReader {
+        SQLiteDatabase db;
         Cursor cursor;
 
-        public CursorReader(Cursor cursor){
+        public CursorReader(SQLiteDatabase db, Cursor cursor){
+            this.db = db;
             this.cursor = cursor;
         }
 
@@ -31,6 +36,23 @@ public class TestTable {
             return cursor.moveToNext();
         }
 
+        public CursorReader first(){
+            if( !cursor.moveToNext()){
+                throw new RuntimeException( "Cursor is empty. Can't call first" );
+            }
+            return this;
+        }
+
+        public <R> List<R> collect( FieldGetter<R> fg ){
+                List<R> ret = new ArrayList<R>();
+                while( moveToNext() ){
+                    ret.add( fg.getField() );
+                }
+
+                return ret;
+        }
+
+
         private IntegerField fieldId;
 
         public IntegerField id(){
@@ -40,6 +62,9 @@ public class TestTable {
             return fieldId;
         }
 
+        public List<Integer> collectId(){
+            return collect( id() );
+        }
         private StringField fieldName;
 
         public StringField name(){
@@ -49,6 +74,9 @@ public class TestTable {
             return fieldName;
         }
 
+        public List<String> collectName(){
+            return collect( name() );
+        }
         private IntegerField fieldAge;
 
         public IntegerField age(){
@@ -58,6 +86,9 @@ public class TestTable {
             return fieldAge;
         }
 
+        public List<Integer> collectAge(){
+            return collect( age() );
+        }
         private DateField fieldBirthday;
 
         public DateField birthday(){
@@ -67,6 +98,9 @@ public class TestTable {
             return fieldBirthday;
         }
 
+        public List<Date> collectBirthday(){
+            return collect( birthday() );
+        }
         private StringField fieldNullfield;
 
         public StringField nullField(){
@@ -76,6 +110,9 @@ public class TestTable {
             return fieldNullfield;
         }
 
+        public List<String> collectNullfield(){
+            return collect( nullField() );
+        }
         private BlobField fieldBlob;
 
         public BlobField blob(){
@@ -84,6 +121,11 @@ public class TestTable {
             }
             return fieldBlob;
         }
+
+        public List<byte[]> collectBlob(){
+            return collect( blob() );
+        }
+
 
 
     }
@@ -171,8 +213,8 @@ public class TestTable {
     }
 
 
-    public static CursorReader cursorReader(Cursor cursor){
-        return new CursorReader( cursor );
+    public static CursorReader cursorReader(SQLiteDatabase db, Cursor cursor){
+        return new CursorReader( db, cursor );
     }
 
     public static class QueryBuilder extends QueryBuilderBase<QueryBuilder, CursorReader>{
@@ -181,12 +223,21 @@ public class TestTable {
         }
 
         public CursorReader query(){
-            return new CursorReader( queryCursor() );
+            return new CursorReader( db, queryCursor() );
+        }
+
+        public CursorReader first(){
+            return query().first();
         }
 
         public QueryBuilder getThis(){
             return this;
         }
+
+        public QueryBuilder byId( Integer value ){
+            return andWhere( String.format( " id = %d ", value ) );
+        }
+
     }
 
     public static QueryBuilder queryBuilder( SQLiteDatabase db ){

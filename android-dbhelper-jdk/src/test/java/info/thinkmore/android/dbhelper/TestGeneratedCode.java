@@ -42,7 +42,7 @@ public class TestGeneratedCode extends AndroidTestCase {
         {
             Cursor cursor = db.query( TestTable.TableName, TestTable.Columns, null, null, null, null, null, null );
             assertTrue( cursor.moveToNext() );
-            val reader = TestTable.cursorReader(cursor);
+            val reader = TestTable.cursorReader(db, cursor);
             //assertEquals( id, reader.id().get() );
             id = reader.id().get();
             Log.v( "Id", id.toString() );
@@ -62,7 +62,7 @@ public class TestGeneratedCode extends AndroidTestCase {
         {
             Cursor cursor = db.query( TestTable.TableName, TestTable.Columns, null, null, null, null, null, null );
             assertTrue( cursor.moveToNext() );
-            val reader = TestTable.cursorReader(cursor);
+            val reader = TestTable.cursorReader(db, cursor);
             assertEquals( 13, reader.age().get() );
             assertEquals( "yang", reader.name().get() );
         }
@@ -94,7 +94,7 @@ public class TestGeneratedCode extends AndroidTestCase {
         {
             Cursor cursor = getCursor(db);
             assertTrue( cursor.moveToNext() );
-            val reader = TestTable.cursorReader(cursor);
+            val reader = TestTable.cursorReader(db, cursor);
             //assertEquals( id, reader.id().get() );
             id = reader.id().get();
             Log.v( "Id", id.toString() );
@@ -114,7 +114,7 @@ public class TestGeneratedCode extends AndroidTestCase {
         {
             Cursor cursor = getCursor(db);
             assertTrue( cursor.moveToNext() );
-            val reader = TestTable.cursorReader(cursor);
+            val reader = TestTable.cursorReader(db, cursor);
             assertEquals( 13, reader.age().get() );
             assertEquals( "yang", reader.name().get() );
         }

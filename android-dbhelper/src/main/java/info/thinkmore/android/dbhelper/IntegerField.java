@@ -2,7 +2,7 @@ package info.thinkmore.android.dbhelper;
 
 import android.database.Cursor;
 
-public class IntegerField extends BaseField {
+public class IntegerField extends BaseField implements FieldGetter<Integer> {
 
 	public IntegerField(String fieldName, Cursor cursor) {
         super( fieldName, cursor );
@@ -13,6 +13,10 @@ public class IntegerField extends BaseField {
             throw new RuntimeException( String.format( "Field %s contains null value", getFieldName() ) );
         }
         return cursor.getInt( columnIndex() );
+    }
+
+    public Integer getField(){
+        return get();
     }
 
     public int get(int defval){

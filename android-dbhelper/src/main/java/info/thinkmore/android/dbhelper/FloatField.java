@@ -2,7 +2,7 @@ package info.thinkmore.android.dbhelper;
 
 import android.database.Cursor;
 
-public class FloatField extends BaseField {
+public class FloatField extends BaseField implements FieldGetter<Float> {
 
 	public FloatField(String fieldName, Cursor cursor) {
 		super(fieldName, cursor);
@@ -13,6 +13,10 @@ public class FloatField extends BaseField {
             throw new RuntimeException( String.format( "Field %s contains null value", getFieldName() ) );
         }
         return cursor.getFloat( columnIndex() );
+    }
+
+    public Float getField(){
+        return get();
     }
 
     public float get( float defvalue ){

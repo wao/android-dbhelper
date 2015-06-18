@@ -10,18 +10,21 @@ public class BaseField {
     @Getter
     String fieldName;
 
-    int    fieldIndex = -1;
+    int    fieldIndex = -2;
 
 	protected BaseField(String fieldName, Cursor cursor) {
         this.fieldName = fieldName;
         this.cursor = cursor;
-        fieldIndex = cursor.getColumnIndex(fieldName);
-        if( fieldIndex == -1 ){
-            throw new RuntimeException( String.format( "Can't find field name %s in cursor", fieldName ) );
-        }
     }
 
     protected int columnIndex(){
+        if( fieldIndex == -2 ){
+            fieldIndex = cursor.getColumnIndex(fieldName);
+            if( fieldIndex == -1 ){
+                throw new RuntimeException( String.format( "Can't find field name %s in cursor", fieldName ) );
+            }
+        }
+
         return fieldIndex;
     }
 
