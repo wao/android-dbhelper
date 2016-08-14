@@ -2,27 +2,27 @@ package info.thinkmore.android.dbhelper;
 
 import android.database.Cursor;
 
-public class IntegerField extends BaseField implements FieldGetter<Integer> {
+public class ShortField extends BaseField implements FieldGetter<Short> {
 
-	public IntegerField(String fieldName, Cursor cursor) {
+	public ShortField(String fieldName, Cursor cursor) {
         super( fieldName, cursor );
 	}
 
-    public int get(){
+    public short get(){
         if( isNull() ){
             throw new RuntimeException( String.format( "Field %s contains null value", getFieldName() ) );
         }
-        return cursor.getInt( columnIndex() );
+        return cursor.getShort( columnIndex() );
     }
 
-    public Integer getField(){
+    public Short getField(){
         return get();
     }
 
-    public int get(int defval){
+    public short get(short defval){
         if( isNull() ){
             return defval;
         }
-        return cursor.getInt( columnIndex() );
+        return cursor.getShort( columnIndex() );
     }
 }

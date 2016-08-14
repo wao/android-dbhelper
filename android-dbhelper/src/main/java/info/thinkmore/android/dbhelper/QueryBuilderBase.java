@@ -2,9 +2,6 @@ package info.thinkmore.android.dbhelper;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import com.google.java.contract.Requires;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -70,15 +67,17 @@ public abstract class QueryBuilderBase<E, T>{
         return getThis();
     }
 
-    @Requires( { " db != null ", " from != null ", "columns != null" })
-        public Cursor queryCursor(){
-            return db.query( from, columns, where, whereArgs, groupBy, having, orderBy, limit );
-        }
+    public Cursor queryCursor(){
+        return db.query( from, columns, where, whereArgs, groupBy, having, orderBy, limit );
+    }
 
-    @Requires( " db != null " )
-        public QueryBuilderBase( SQLiteDatabase db ){
-            this.db = db;
-        }
+    public QueryBuilderBase( SQLiteDatabase db ){
+        this.db = db;
+    }
+
+    public int delete(){
+        return db.delete( from, where, whereArgs );
+    }
 
     abstract public T query();
     abstract public T first();

@@ -138,6 +138,36 @@ public class SQLiteDatabase {
         return rawQuery( sql.toString(), selectionArgs );
     }
 
+    public int delete(String table, String whereClause, String[] whereArgs){
+        try{
+            StringBuilder args = new StringBuilder("delete from ");
+            args.append( table );
+
+            if( whereClause != null ){
+                args.append( " where " );
+                args.append( whereClause );
+            }
+
+            logger.trace( "SQLite: {}", args.toString() );
+            SQLiteStatement sql = db.prepare( args.toString() );
+
+            if( whereArgs != null ){
+                for( int i = 0; i < whereArgs.length; ++i ){
+                    //Log.v( "Bind", String.format( "%d=%s", i+1, whereArgs[i] ) );
+                    sql.bind( i+1, whereArgs[i] );
+                }
+            }
+
+            while( sql.step() ){
+            }
+            sql.dispose();
+
+            return db.getChanges();
+        }catch(SQLiteException e){
+            throw new RuntimeException( e );
+        }
+    }
+
     public int update(String table, ContentValues values, String whereClause, String[] whereArgs){
         try{
             int wherelen = 0;
@@ -163,7 +193,7 @@ public class SQLiteDatabase {
                 args.append( " where " );
                 args.append( whereClause );
             }
-            
+
             //Log.v( "Sqlite", args.toString() );
 
             logger.trace( "SQLite: {}", args.toString() );
@@ -181,6 +211,8 @@ public class SQLiteDatabase {
                 Object value = values.getValue(columnNames[i]);
                 if( value.getClass().equals(Integer.class) ){
                     sql.bind( i+wherelen+1, ((Integer)value).intValue() );
+                }else if( value.getClass().equals(Short.class) ){
+                    sql.bind( i+wherelen+1, ((Short)value).intValue() );
                 }else if( value.getClass().equals(Long.class)){
                     sql.bind( i+wherelen+1, ((Long)value).longValue() );
                 }else if( value.getClass().equals(Double.class)){
@@ -213,6 +245,7 @@ public class SQLiteDatabase {
         }
     }
 
+
     public long insert(String table, String nullColumnHack, ContentValues values){
         try{
             String[] columnNames = values.columnNames();
@@ -227,6 +260,8 @@ public class SQLiteDatabase {
                 Object value = values.getValue(columnNames[i]);
                 if( value.getClass().equals(Integer.class) ){
                     sql.bind( i+1, ((Integer)value).intValue() );
+                }else if( value.getClass().equals(Short.class) ){
+                    sql.bind( i+1, ((Short)value).intValue() );
                 }else if( value.getClass().equals(Long.class)){
                     sql.bind( i+1, ((Long)value).longValue() );
                 }else if( value.getClass().equals(Double.class)){

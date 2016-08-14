@@ -24,22 +24,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>18.0</version>
-    </dependency>
-    <dependency>
-      <groupId>info.thinkmore.android</groupId>
-      <artifactId>cofoja-api</artifactId>
-      <version>1.2-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>info.thinkmore.android</groupId>
-      <artifactId>cofoja</artifactId>
-      <version>1.2-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
       <version>5.0.1_r2</version>

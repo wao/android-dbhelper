@@ -80,6 +80,14 @@ public class SQLiteCursor implements Cursor {
         }
     }
 
+    public short getShort(int columnIndex){
+        try{
+            return (short)statement.columnInt( columnIndex );
+        }catch(SQLiteException e){
+            throw new RuntimeException( e );
+        }
+    }
+
     public boolean isNull(int columnIndex){
         try{
             return statement.columnNull( columnIndex );

@@ -3,6 +3,7 @@ package android.database;
 public interface Cursor {
     byte[] getBlob(int columnIndex);
     int getInt(int columnIndex);
+    short getShort(int columnIndex);
     float getFloat(int columnIndex);
     double getDouble(int columnIndex);
     String getString(int columnIndex);

@@ -1,7 +1,5 @@
 package info.thinkmore.android.dbhelper;
 
-import com.google.java.contract.Requires;
-
 import android.database.sqlite.SQLiteDatabase;
 
 public class QueryBuilder extends QueryBuilderBase<QueryBuilder, Integer> {
@@ -61,11 +59,10 @@ public class QueryBuilder extends QueryBuilderBase<QueryBuilder, Integer> {
             //return db.query( from, columns, where, whereArgs, groupBy, having, orderBy, limit );
         //}
 
-    @Requires( " db != null " )
-        public QueryBuilder( SQLiteDatabase db ){
-            super(db);
-        }
-    
+    public QueryBuilder( SQLiteDatabase db ){
+        super(db);
+    }
+
     public Integer query(){
         throw new RuntimeException( "Not implment query() function" );
     }
